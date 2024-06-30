@@ -28,6 +28,11 @@ def mp_fragment():
     provider_name = provider(model_name)
     return model_name, provider_name
 
+class LLMMetadata(BaseModel):
+    model: str = Field(description="The model name")
+    context_window: int = Field(description="The context window size")
+    max_tokens: int = Field(description="The maximum number of tokens")
+
 class ClaudeLLM(LLM):
     claude_instance: Claude = Field(exclude=True)
 
@@ -36,12 +41,12 @@ class ClaudeLLM(LLM):
         self.claude_instance = claude_instance
 
     @property
-    def metadata(self) -> dict:
-        return {
-            "model": self.claude_instance.model,
-            "context_window": self.claude_instance.context_window,
-            "max_tokens": self.claude_instance.max_tokens,
-        }
+    def metadata(self) -> LLMMetadata:
+        return LLMMetadata(
+            model=self.claude_instance.model,
+            context_window=self.claude_instance.context_window,
+            max_tokens=self.claude_instance.max_tokens,
+        )
 
     def complete(self, prompt: str, **kwargs: Any) -> str:
         return self.claude_instance.complete(prompt, **kwargs)
