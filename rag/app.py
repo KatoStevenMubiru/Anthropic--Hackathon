@@ -29,9 +29,13 @@ def mp_fragment():
     return model_name, provider_name
 
 class LLMMetadata(BaseModel):
-    model: str = Field(description="The model name")
+    model_name: str = Field(description="The model name")
     context_window: int = Field(description="The context window size")
-    max_tokens: int = Field(description="The maximum number of tokens")
+    num_output: int = Field(description="Maximum number of output tokens")
+    is_chat_model: bool = Field(description="Whether the model is a chat model")
+    is_function_calling_model: bool = Field(description="Whether the model supports function calling")
+    max_tokens: Optional[int] = Field(description="The maximum number of tokens (if applicable)")
+    system_role: str = Field(default="system", description="The role for system messages")
 
 class ClaudeLLM(LLM):
     claude_instance: Claude = Field(exclude=True)
@@ -43,9 +47,13 @@ class ClaudeLLM(LLM):
     @property
     def metadata(self) -> LLMMetadata:
         return LLMMetadata(
-            model=self.claude_instance.model,
+            model_name=self.claude_instance.model,
             context_window=self.claude_instance.context_window,
+            num_output=self.claude_instance.max_tokens,
+            is_chat_model=True,
+            is_function_calling_model=False,
             max_tokens=self.claude_instance.max_tokens,
+            system_role="system"
         )
 
     def complete(self, prompt: str, **kwargs: Any) -> str:
@@ -76,6 +84,7 @@ def load_models(model_name, provider_name):
     claude = Claude(model=model_name, api_key=api_key)
     Settings.llm = ClaudeLLM(claude)
     Settings.embed_model = resolve_embed_model("local:BAAI/bge-small-en-v1.5")
+    st.write(f"Models loaded: {model_name}")
 
 @st.cache_resource
 def rerank_model():
@@ -94,12 +103,23 @@ load_models(model_name, provider_name)
 if uploaded_file is not None:
     @st.cache_resource
     def vector_store(uploaded_file):
-        documents = process_healthcare_document(uploaded_file)
-        index = VectorStoreIndex.from_documents(documents)
-        return index 
+        try:
+            st.write(f"Processing file: {uploaded_file.name}")
+            documents = process_healthcare_document(uploaded_file)
+            st.write(f"Created {len(documents)} document chunks")
+            index = VectorStoreIndex.from_documents(documents)
+            st.write("Vector index created succesfully")
+            return index 
+        except Exception as e:
+            st.error(f"Error creating index: {str(e)}")
+           
     
     index = vector_store(uploaded_file)
-    chat_engine = index.as_chat_engine(chat_mode="context", verbose=True, similarity_top_k=10, node_postprocessors=[rerank_model()])
+    if index:
+        chat_engine = index.as_chat_engine(chat_mode="context", verbose=True, similarity_top_k=10, node_postprocessors=[rerank_model()])
+        st.write("Chat engine created successfully")
+    else:
+        st.error("Failed to create chat engine")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -114,17 +134,27 @@ if len(st.session_state.messages) == 0:
         st.markdown(initial)
         st.session_state.messages.append({"role": "assistant", "content": initial})
 
+
 if prompt := st.chat_input():
-    if not api_key or not uploaded_file:
-        st.warning("Please enter a Claude API key and upload a healthcare document.")
+    if not api_key:
+        st.warning("Please enter a Claude API key.")
+    elif not uploaded_file:
+        st.warning("Please upload a healthcare document.")
+    elif 'chat_engine' not in locals():
+        st.warning("Chat engine not initialized. Please check for errors above.")
     else: 
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
         
         with st.chat_message("assistant"):
-            query_category = categorize_query(prompt)
-            response = chat_engine.chat(prompt)
-            formatted_response = format_healthcare_response(response, query_category)
-            st.write(formatted_response)
-            st.session_state.messages.append({"role": "assistant", "content": formatted_response})
+            try:
+                st.write("Processing query...")
+                query_category = categorize_query(prompt)
+                response = chat_engine.chat(prompt)
+                st.write("Query processed successfully")
+                formatted_response = format_healthcare_response(response, query_category)
+                st.write(formatted_response)
+                st.session_state.messages.append({"role": "assistant", "content": formatted_response})
+            except Exception as e:
+                st.error(f"Error processing query: {str(e)}")
