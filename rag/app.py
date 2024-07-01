@@ -20,11 +20,11 @@ api_key = st.sidebar.text_input("Claude API Key", type="password")
 os.environ["ANTHROPIC_API_KEY"] = api_key
 
 def provider(model_name):
-    return "claude-3-sonnet-20240229"
+    return "claude-3-5-sonnet-20240620"
 
 @st.experimental_fragment
 def mp_fragment():
-    model_name = "claude-3-sonnet-20240229"
+    model_name = "claude-3-5-sonnet-20240620"
     provider_name = provider(model_name)
     return model_name, provider_name
 
@@ -152,9 +152,11 @@ if prompt := st.chat_input():
                 st.write("Processing query...")
                 query_category = categorize_query(prompt)
                 response = chat_engine.chat(prompt)
+                print(response)
                 st.write("Query processed successfully")
                 formatted_response = format_healthcare_response(response, query_category)
                 st.write(formatted_response)
                 st.session_state.messages.append({"role": "assistant", "content": formatted_response})
+            
             except Exception as e:
                 st.error(f"Error processing query: {str(e)}")
