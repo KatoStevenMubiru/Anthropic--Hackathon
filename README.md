@@ -4,6 +4,16 @@
 
 The Healthcare Document Interrogation System uses the Anthropic Claude 3.5 API to allow users to upload healthcare documents and ask questions to extract relevant information. This system leverages advanced NLP techniques to provide accurate, context-aware responses, enhancing information retrieval in the healthcare sector.
 ![alt text](image.png)
+### Leveraging Claude 3.5 Capabilities
+
+We utilize Claude 3.5's advanced capabilities to enhance our system:
+
+- **Contextual Understanding:** Claude 3.5's deep contextual understanding ensures that the responses are highly relevant to the queries.
+- **Advanced NLP:** Claude 3.5 employs cutting-edge natural language processing techniques to interpret and respond to complex medical queries accurately.
+- **Dynamic Query Processing:** Claude 3.5 dynamically adjusts its responses based on the context and specificity of the questions asked.
+- **Multi-turn Conversations:** Support for multi-turn conversations allows for follow-up questions and deeper interaction.
+- **Vision Capabilities:** Claude 3.5 includes vision capabilities to analyze and extract information from images within healthcare documents, providing a more comprehensive understanding of the content.
+
 ## Build with Claude June 2024 Contest
 
 We're excited to announce our participation in the Build with Claude June 2024 contest! This contest invites developers to create innovative projects using Claude through the Anthropic API.
