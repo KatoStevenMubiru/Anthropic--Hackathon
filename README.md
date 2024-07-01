@@ -11,15 +11,6 @@ We're excited to announce our participation in the Build with Claude June 2024 c
 ### Contest Details:
 - **Duration**: The two-week virtual hackathon runs from June 26th, 2024 at 12pm PT to July 10th, 2024 at 12pm PT.
 - **Prizes**: The top three projects will each receive $10,000 worth of Anthropic API credits.
-- **Participation**: To participate, simply build your project and submit it [here](insert_submission_link).
-
-### Evaluation Criteria:
-We are looking for projects that showcase:
-
-1. **Creativity**: Innovative and unique use of Claude.
-2. **Impact**: The potential positive effect of the project.
-3. **Usefulness**: Practical applications and benefits of the project.
-4. **Effective Implementation**: Technical proficiency and efficient use of Claude.
 
 ## Project Overview
 
