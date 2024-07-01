@@ -15,6 +15,18 @@ We're excited to announce our participation in the Build with Claude June 2024 c
 - **Duration**: The two-week virtual hackathon runs from June 26th, 2024 at 12pm PT to July 10th, 2024 at 12pm PT.
 - **Prizes**: The top three projects will each receive $10,000 worth of Anthropic API credits.
 
+
+## Project Overview
+
+This project demonstrates the use of the following components:
+
+### Indexing with Llama Index
+We use the Llama Index to create a vector store from healthcare documents, enabling efficient and accurate information retrieval.
+
+### Using Your Anthropic API Credits
+Participants can use their Anthropic API credits to test and refine their projects, ensuring the highest quality and performance.
+
+## Features
 ## Leveraging Claude 3.5 Capabilities
 
 We utilize Claude 3.5's advanced capabilities to enhance our system:
@@ -53,11 +65,9 @@ def _get_context_window(self, model: str) -> int:
     return context_windows.get(model, 100000)
 ```
 
-2. Expanding on Claude's vision capabilities:
 
-Add this section under "Features":
 
-```markdown
+
 ## Leveraging Claude's Vision Capabilities
 
 Our system utilizes Claude 3.5 Sonnet's advanced vision capabilities to analyze and extract information from images within healthcare documents. This is particularly useful for processing medical imaging reports, charts, graphs, and other visual data commonly found in healthcare literature.
@@ -86,17 +96,6 @@ def extract_images_from_page(page):
     return images
 ```
 
-## Project Overview
-
-This project demonstrates the use of the following components:
-
-### Indexing with Llama Index
-We use the Llama Index to create a vector store from healthcare documents, enabling efficient and accurate information retrieval.
-
-### Using Your Anthropic API Credits
-Participants can use their Anthropic API credits to test and refine their projects, ensuring the highest quality and performance.
-
-## Features
 ## Handling Medical Terminology
 
 Our Healthcare Document Interrogation System employs several strategies to ensure accurate handling of medical terminology:
