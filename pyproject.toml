@@ -19,6 +19,7 @@ fitz = "^0.0.1.dev2"
 pymupdf = "^1.24.2"
 sentence-transformers = "^2.2.2"
 llama-index-embeddings-huggingface = "^0.2.0"
+pillow = "^10.3.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
