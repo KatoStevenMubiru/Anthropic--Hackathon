@@ -1,6 +1,7 @@
 import os
 from anthropic import Anthropic, APIError
 from typing import Optional, List, Any
+import base64
 
 # Set this environment variable to suppress tokenizer warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -15,6 +16,7 @@ class Claude:
 
     def _get_context_window(self, model: str) -> int:
         context_windows = {
+            "claude-3-5-sonnet-20240620": 200000,
             "claude-3-opus-20240229": 200000,
             "claude-3-sonnet-20240229": 200000,
             "claude-2.1": 100000,
@@ -46,7 +48,7 @@ class Claude:
             )
             print(f"Response type: {type(response)}")
             print(f"Response content: {response.content}")
-            return response.content
+            return response.content[0].text if response.content else ""
         except APIError as e:
             if "credit balance is too low" in str(e):
                 print("Error: Insufficient credits. Please upgrade your Anthropic account or purchase more credits.")
@@ -67,12 +69,48 @@ class Claude:
             )
             print(f"Response type: {type(response)}")
             print(f"Response content: {response.content}")
-            return response.content
+            return response.content[0].text if response.content else ""
         except APIError as e:
             if "credit balance is too low" in str(e):
                 print("Error: Insufficient credits. Please upgrade your Anthropic account or purchase more credits.")
             else:
                 print(f"An error occurred during completion: {e}")
+            return ""
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return ""
+
+    def chat_with_vision(self, messages: List[Any], images: List[str], **kwargs) -> str:
+        try:
+            prepared_messages = self._prepare_messages(messages)
+            for image in images:
+                prepared_messages.append({
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": base64.b64encode(image).decode()
+                            }
+                        }
+                    ]
+                })
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=self.max_tokens,
+                messages=prepared_messages,
+                **kwargs
+            )
+            print(f"Response type: {type(response)}")
+            print(f"Response content: {response.content}")
+            return response.content[0].text if response.content else ""
+        except APIError as e:
+            if "credit balance is too low" in str(e):
+                print("Error: Insufficient credits. Please upgrade your Anthropic account or purchase more credits.")
+            else:
+                print(f"An error occurred during chat with vision: {e}")
             return ""
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
