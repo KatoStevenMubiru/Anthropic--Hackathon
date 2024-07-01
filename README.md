@@ -3,7 +3,7 @@
 # Healthcare Document Interrogation System
 
 The Healthcare Document Interrogation System uses the Anthropic Claude 3.5 API to allow users to upload healthcare documents and ask questions to extract relevant information. This system leverages advanced NLP techniques to provide accurate, context-aware responses, enhancing information retrieval in the healthcare sector.
-
+![alt text](image.png)
 ## Build with Claude June 2024 Contest
 
 We're excited to announce our participation in the Build with Claude June 2024 contest! This contest invites developers to create innovative projects using Claude through the Anthropic API.
