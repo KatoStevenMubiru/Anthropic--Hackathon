@@ -24,6 +24,67 @@ We utilize Claude 3.5's advanced capabilities to enhance our system:
 - **Dynamic Query Processing:** Claude 3.5 dynamically adjusts its responses based on the context and specificity of the questions asked.
 - **Multi-turn Conversations:** Support for multi-turn conversations allows for follow-up questions and deeper interaction.
 - **Vision Capabilities:** Claude 3.5 includes vision capabilities to analyze and extract information from images within healthcare documents, providing a more comprehensive understanding of the content.
+## Leveraging Claude 3.5 Sonnet's 200K Token Context Window
+
+Our system specifically uses the Claude 3.5 Sonnet model, which offers a 200,000 token context window. This extensive context window allows our system to process and analyze large healthcare documents in their entirety, without the need for chunking or summarization that might lose important details. 
+
+Here's how we leverage this capability:
+
+1. **Full Document Analysis**: We can load entire research papers, medical records, or lengthy clinical guidelines into a single context, allowing for more comprehensive and accurate analysis.
+
+2. **Cross-Reference Capability**: The large context window enables the system to cross-reference information across different sections of a document, improving the accuracy of answers and insights.
+
+3. **Multi-Document Queries**: We can combine multiple shorter documents into a single context, allowing for queries that span across several related documents.
+
+4. **Preservation of Document Structure**: The large context window allows us to maintain the original structure of complex medical documents, including tables, lists, and hierarchical sections, which is crucial for accurate interpretation.
+
+In our implementation, we utilize this capability in the `claude_llm.py` file:
+
+```python
+def _get_context_window(self, model: str) -> int:
+    context_windows = {
+        "claude-3-5-sonnet-20240620": 200000,
+        "claude-3-opus-20240229": 200000,
+        "claude-3-sonnet-20240229": 200000,
+        "claude-2.1": 100000,
+        "claude-2.0": 100000,
+        "claude-instant-1.2": 100000,
+    }
+    return context_windows.get(model, 100000)
+```
+
+2. Expanding on Claude's vision capabilities:
+
+Add this section under "Features":
+
+```markdown
+## Leveraging Claude's Vision Capabilities
+
+Our system utilizes Claude 3.5 Sonnet's advanced vision capabilities to analyze and extract information from images within healthcare documents. This is particularly useful for processing medical imaging reports, charts, graphs, and other visual data commonly found in healthcare literature.
+
+Here's how we implement this feature:
+
+1. **Image Extraction**: In our `document_processor.py`, we use PyMuPDF to extract images from PDF documents:
+
+```python
+def extract_images_from_page(page):
+    images = []
+    for img_index, img in enumerate(page.get_images(full=True)):
+        xref = img[0]
+        base_image = page.parent.extract_image(xref)
+        image_bytes = base_image["image"]
+        
+        # Convert to PIL Image
+        image = Image.open(io.BytesIO(image_bytes))
+        
+        # Convert to base64
+        buffered = io.BytesIO()
+        image.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        
+        images.append(img_str)
+    return images
+```
 
 ## Project Overview
 
