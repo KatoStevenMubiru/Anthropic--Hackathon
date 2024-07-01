@@ -5,7 +5,7 @@ from llama_index.core.postprocessor import SentenceTransformerRerank
 from llama_index.core.llms import LLM
 from claude_llm import Claude
 from document_processor import process_healthcare_document
-from healthcare_utils import categorize_query, format_healthcare_response
+from healthcare_utils import process_healthcare_query
 import os
 import asyncio
 from typing import Any, List, Optional
@@ -85,6 +85,7 @@ def load_models(model_name, provider_name):
     Settings.llm = ClaudeLLM(claude)
     Settings.embed_model = resolve_embed_model("local:BAAI/bge-small-en-v1.5")
     st.write(f"Models loaded: {model_name}")
+    return claude
 
 @st.cache_resource
 def rerank_model():
@@ -98,22 +99,21 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Upload a healthcare PDF", accept_multiple_files=False, on_change=reset)
     st.sidebar.button("Clear Chat History", on_click=reset)
 
-load_models(model_name, provider_name)
+claude_instance = load_models(model_name, provider_name)
 
 if uploaded_file is not None:
     @st.cache_resource
     def vector_store(uploaded_file):
         try:
             st.write(f"Processing file: {uploaded_file.name}")
-            documents = process_healthcare_document(uploaded_file)
+            documents = process_healthcare_document(uploaded_file, include_vision=True)
             st.write(f"Created {len(documents)} document chunks")
             index = VectorStoreIndex.from_documents(documents)
-            st.write("Vector index created succesfully")
+            st.write("Vector index created successfully")
             return index 
         except Exception as e:
             st.error(f"Error creating index: {str(e)}")
            
-    
     index = vector_store(uploaded_file)
     if index:
         chat_engine = index.as_chat_engine(chat_mode="context", verbose=True, similarity_top_k=10, node_postprocessors=[rerank_model()])
@@ -134,7 +134,6 @@ if len(st.session_state.messages) == 0:
         st.markdown(initial)
         st.session_state.messages.append({"role": "assistant", "content": initial})
 
-
 if prompt := st.chat_input():
     if not api_key:
         st.warning("Please enter a Claude API key.")
@@ -150,13 +149,27 @@ if prompt := st.chat_input():
         with st.chat_message("assistant"):
             try:
                 st.write("Processing query...")
-                query_category = categorize_query(prompt)
-                response = chat_engine.chat(prompt)
-                print(response)
+                chat_response = chat_engine.chat(prompt)
+                print(chat_response)
                 st.write("Query processed successfully")
-                formatted_response = format_healthcare_response(response, query_category)
-                st.write(formatted_response)
-                st.session_state.messages.append({"role": "assistant", "content": formatted_response})
+                
+                # Process the query using Claude 3.5 Sonnet
+                result = process_healthcare_query(str(chat_response), claude_instance)
+                
+                # Display the formatted response
+                st.write(result["response"])
+                
+                # Display key points
+                st.write("Key Points:")
+                for point in result["key_points"]:
+                    st.write(f"• {point}")
+                
+                # Display follow-up questions
+                st.write("Follow-up Questions:")
+                for question in result["follow_up_questions"]:
+                    st.write(f"• {question}")
+                
+                st.session_state.messages.append({"role": "assistant", "content": result["response"]})
             
             except Exception as e:
                 st.error(f"Error processing query: {str(e)}")
