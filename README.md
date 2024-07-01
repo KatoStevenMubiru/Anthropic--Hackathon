@@ -233,6 +233,33 @@ For a complete list, refer to the `pyproject.toml` file.
 - **PDF Processing Errors**: Make sure the uploaded PDF is not corrupted and is readable.
 - **Out of Memory Errors**: Large documents may cause memory issues. Try processing smaller documents or increasing your system's RAM.
 
+## Performance Evaluation
+
+While we haven't conducted comprehensive benchmarks yet, our system is designed with performance in mind. Here are the key areas we plan to measure and optimize:
+
+1. **Document Processing Efficiency**: 
+   - We aim to measure the processing time for medical documents of various sizes, from short clinical notes to lengthy research papers.
+   - Our goal is to leverage Claude 3.5 Sonnet's 200K token context window to process large documents efficiently.
+
+2. **Query Response Time**:
+   - We plan to evaluate response times for both simple queries and complex questions requiring cross-referencing within documents.
+   - Our integration with Llama Index is designed to optimize retrieval speed.
+
+3. **Accuracy**:
+   - We intend to create a test set of diverse medical queries to assess our system's accuracy in information retrieval and inference.
+   - This will include evaluating performance on different types of medical content, from patient records to academic literature.
+
+4. **Image Analysis Capabilities**:
+   - We will measure the system's ability to successfully extract and analyze images from documents.
+   - We plan to assess the accuracy of interpreting various types of medical visuals, including charts, graphs, and diagnostic images.
+
+5. **Scalability**:
+   - As we progress, we aim to test the system's performance with increasing numbers of documents and concurrent users.
+
+We're committed to rigorous testing and continuous improvement of our system's performance. We encourage users to conduct their own benchmarks tailored to their specific use cases, as performance can vary depending on the nature of the documents and queries used.
+
+In future updates, we plan to share more detailed performance metrics as we gather more comprehensive data from real-world usage and structured testing.
+
 ## Future Improvements
 
 - Implement multi-document querying
