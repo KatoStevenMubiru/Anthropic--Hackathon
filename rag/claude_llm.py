@@ -1,5 +1,9 @@
-from anthropic import Anthropic
+import os
+from anthropic import Anthropic, APIError
 from typing import Optional, List, Any
+
+# Set this environment variable to suppress tokenizer warnings
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 class Claude:
     def __init__(self, model: str, api_key: Optional[str] = None) -> None:
@@ -19,22 +23,66 @@ class Claude:
         }
         return context_windows.get(model, 100000)
 
+    def _prepare_messages(self, messages: List[Any]) -> List[dict]:
+        prepared_messages = []
+        for message in messages:
+            if isinstance(message, dict) and 'role' in message and 'content' in message:
+                prepared_messages.append({
+                    'role': message['role'],
+                    'content': str(message['content'])
+                })
+            else:
+                print(f"Skipping invalid message: {message}")
+        return prepared_messages
+
     def chat(self, messages: List[Any], **kwargs) -> str:
-        response = self.client.messages.create(
-            model=self.model,
-            max_tokens=self.max_tokens,
-            temperature=0,
-            messages=messages,
-            **kwargs
-        )
-        return response.content[0].text
+        try:
+            prepared_messages = self._prepare_messages(messages)
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=self.max_tokens,
+                messages=prepared_messages,
+                **kwargs
+            )
+            print(f"Response type: {type(response)}")
+            print(f"Response content: {response.content}")
+            return response.content
+        except APIError as e:
+            if "credit balance is too low" in str(e):
+                print("Error: Insufficient credits. Please upgrade your Anthropic account or purchase more credits.")
+            else:
+                print(f"An error occurred during chat: {e}")
+            return ""
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return ""
 
     def complete(self, prompt: str, **kwargs) -> str:
-        response = self.client.completions.create(
-            model=self.model,
-            max_tokens_to_sample=self.max_tokens,
-            temperature=0,
-            prompt=f"\n\nHuman: {prompt}\n\nAssistant:",
-            **kwargs
-        )
-        return response.completion
+        try:
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=self.max_tokens,
+                messages=[{"role": "user", "content": prompt}],
+                **kwargs
+            )
+            print(f"Response type: {type(response)}")
+            print(f"Response content: {response.content}")
+            return response.content
+        except APIError as e:
+            if "credit balance is too low" in str(e):
+                print("Error: Insufficient credits. Please upgrade your Anthropic account or purchase more credits.")
+            else:
+                print(f"An error occurred during completion: {e}")
+            return ""
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return ""
+
+    def get_model_name(self) -> str:
+        return self.model
+
+    def get_context_window(self) -> int:
+        return self.context_window
+
+    def get_max_tokens(self) -> int:
+        return self.max_tokens
