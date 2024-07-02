@@ -110,28 +110,32 @@ Our Healthcare Document Interrogation System employs several strategies to ensur
 
 5. **Human-in-the-Loop Verification**: For critical applications, the system can flag uncertain interpretations for human expert review, ensuring the highest level of accuracy.
 
-## Case Studies
+## Case Studies (Ongoing/Planned)
 
-### Case Study 1: Streamlining Literature Review for Medical Researchers
+### Case Study 1: Aiming to Streamline Literature Review for Medical Researchers
 
-A team of oncology researchers used our system to analyze a corpus of 1,000 research papers on emerging cancer treatments. The system was able to:
+We are planning to work with a team of oncology researchers to analyze a corpus of 1,000 research papers on emerging cancer treatments. Our goal is for the system to:
 
 - Categorize papers by treatment type and cancer type
 - Extract key findings and methodologies
 - Generate summaries of each paper
 - Identify trends and gaps in current research
 
-Result: The researchers estimated that the system saved them over 200 hours of manual review time, allowing them to focus on designing new experiments based on the insights gained.
+**Expected Outcome:** We anticipate that researchers could save over 200 hours of manual review time, allowing them to focus on designing new experiments based on the insights gained.
 
-### Case Study 2: Enhancing Patient Education in a Primary Care Clinic
+### Case Study 2: Planning to Enhance Patient Education in a Primary Care Clinic
 
-A primary care clinic integrated our system into their patient portal, allowing patients to upload their medical records and ask questions. The system:
+We are aiming to integrate our system into a primary care clinic's patient portal, allowing patients to upload their medical records and ask questions. The system will be designed to:
 
-- Provided plain-language explanations of medical terms and diagnoses
-- Offered personalized lifestyle recommendations based on patient history
-- Generated follow-up questions to encourage patient engagement
+- Provide plain-language explanations of medical terms and diagnoses
+- Offer personalized lifestyle recommendations based on patient history
+- Generate follow-up questions to encourage patient engagement
 
-Result: The clinic reported a 30% reduction in non-urgent patient inquiries and a 25% increase in patient satisfaction scores, as patients felt more informed and empowered in managing their health.
+**Expected Outcome:** We hope to see a significant reduction in non-urgent patient inquiries and an increase in patient satisfaction scores, as patients become more informed and empowered in managing their health.
+
+---
+
+**Note:** These case studies are designed to leverage Claude's capabilities in content analysis, summarization, and classification. However, it's important to note that Claude is not designed to interpret complex diagnostic scans or provide medical advice. Any outputs should not be considered a substitute for professional medical diagnosis. Human oversight and involvement of medical professionals is crucial in the development and implementation of such systems, especially when dealing with patient data and medical information.
 
 ## Getting Started
 
