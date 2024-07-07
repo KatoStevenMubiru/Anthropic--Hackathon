@@ -288,8 +288,8 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## Contact
 
 For any queries or feedback, please open an issue on this GitHub repository or contact the maintainers directly at:
-glorrysibomana758@gmail.com
-kato.steven60@gmail.com
+- glorrysibomana758@gmail.com
+- kato.steven60@gmail.com
 
 ## Disclaimer
 
